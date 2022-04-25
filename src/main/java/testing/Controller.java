@@ -2,6 +2,7 @@ package testing;
 
 import org.springframework.web.bind.annotation.*;
 
+/*
 @org.springframework.stereotype.Controller
 public class Controller {
 
@@ -22,4 +23,10 @@ public class Controller {
     public String hello3(@PathVariable("name") String name) {
         return "Hello " + name;
     }
+}
+*/
+
+@RestController
+public class Controller {
+
 }
