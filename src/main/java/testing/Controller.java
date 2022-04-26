@@ -1,8 +1,15 @@
 package testing;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dataStructures.ProgrammingLanguage;
+import dataStructures.Repository;
+import dataStructures.User;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.web.bind.annotation.*;
+
+import javax.swing.*;
 import java.net.http.HttpResponse.BodyHandlers;
 
 
@@ -10,6 +17,10 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 /*
 @org.springframework.stereotype.Controller
@@ -54,6 +65,11 @@ public class Controller {
 
         String stringResponse = response.body();
         JSONObject jj = new JSONObject(stringResponse);
+
+        ArrayList<Repository> repositoriesList = new ArrayList<>();
+        ArrayList<ProgrammingLanguage> languagesList = new ArrayList<>();
+
+        //setting login, bio and name from http response
         String login = jj.getString("login");
         String bio;
         String name;
@@ -72,16 +88,56 @@ public class Controller {
             name = jj.getString("name");
         }
 
+        User user = new User();
+        user.setLogin(login);
+        user.setBio(bio);
+        user.setName(name);
 
         System.out.println("Login: " + login);
         System.out.println("Bio: " + bio);
         System.out.println("Name: " + name);
 
 
+        ArrayList<String> links = new ArrayList<>();
+        var request2 = HttpRequest.newBuilder().uri(URI.create(baseUrl + username + "/repos"))
+                .setHeader("Authorization", authorization)
+                .GET()
+                .build();
+
+        var response2 = HttpClient.newHttpClient().send(request2, BodyHandlers.ofString());
+
+        String stringResponse2 = response2.body();
+
+
+        try
+        {
+            JSONArray jsonArray = new JSONArray(stringResponse2);
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                //System.out.println(jsonObject.toString());
+                String path2 = jsonObject.getString("languages_url");
+                String name2 = jsonObject.getString("name");
+                System.out.println(name2);
+                System.out.println(path2);
+
+            }
+        }
+        catch (JSONException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+
+
+        //ArrayList<ProgrammingLanguage> programmingLanguages = new ArrayList<>();
+        //Repository repository = new Repository();
+        //repositoriesList.add(repository);
+        //user.setLanguagesList();
 
         return stringResponse;
-
-
 
         //return objectMapper.writeValueAsString(" Dane użytkownika '" + username + "' ");
         //tutaj api githuba
