@@ -48,6 +48,9 @@ public class Controller {
 
 @RestController
 public class Controller {
+    HttpClient client = HttpClient.newHttpClient();
+
+
     private static final String authorization = "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";
     private static final String baseUrl = "https://api.github.com/users/";
 
@@ -119,6 +122,25 @@ public class Controller {
                 //System.out.println(jsonObject.toString());
                 String path2 = jsonObject.getString("languages_url");
                 String name2 = jsonObject.getString("name");
+
+                var request3 = HttpRequest.newBuilder().uri(URI.create(path2))
+                        .setHeader("Authorization", authorization)
+                        .GET()
+                        .build();
+
+                var response3 = HttpClient.newHttpClient().send(request3, BodyHandlers.ofString());
+
+                String stringResponse3 = response3.body();
+                JSONObject jj3 = new JSONObject(stringResponse3);
+                Iterator<String> keys = jj3.keys();
+                while(keys.hasNext()) {
+                    String key = keys.next();
+                    int lanSize = jj3.getInt(key);
+                    System.out.println(lanSize);
+                    System.out.println(key);
+                }
+
+
                 System.out.println(name2);
                 System.out.println(path2);
 
