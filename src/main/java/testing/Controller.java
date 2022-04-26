@@ -15,10 +15,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
-import java.util.ArrayList;
 import java.util.Iterator;
-
-
 
 @RestController
 public class Controller {
@@ -29,7 +26,7 @@ public class Controller {
 
     ObjectMapper objectMapper = new ObjectMapper();
     @GetMapping("/user_name/{username}")
-    public String getUser(@PathVariable("username") String username) throws IOException, InterruptedException {
+    public String getUser(@PathVariable("username") String username, User user) throws IOException, InterruptedException {
 
         var basicRequest = HttpRequest.newBuilder().uri(URI.create(baseUrl + username))
                 .setHeader("Authorization", authorization)
@@ -42,7 +39,9 @@ public class Controller {
         JSONObject jjBasicResponse = new JSONObject(stringBasicResponse);
 
         //setting login, bio and name from http response
-        User user = new User();
+        if(user == null) {
+            user = new User();
+        }
         String login = jjBasicResponse.getString("login");
         user.setLogin(login);
 
@@ -65,6 +64,7 @@ public class Controller {
         }
         user.setName(name);
 
+        //Getting an access to user repositories
         var userReposRequest = HttpRequest.newBuilder().uri(URI.create(baseUrl + username + "/repos"))
                 .setHeader("Authorization", authorization)
                 .GET()
@@ -73,54 +73,53 @@ public class Controller {
         var userReposResponse = HttpClient.newHttpClient().send(userReposRequest, BodyHandlers.ofString());
         String stringUserReposResponse = userReposResponse.body();
 
+        //Setting repositories user data
         Controller.getUserRepos(user, stringUserReposResponse);
+        user.generateLanguagesList();
+        user.printUserTotalReposInfo();
         user.printUserData();
+
         return stringBasicResponse;
     }
 
-    static void getUserRepos(User user, String stringUserReposResponse) throws IOException, InterruptedException {
-        try
-        {
+    public static void getUserRepos(User user, String stringUserReposResponse) throws IOException, InterruptedException {
+        try {
             JSONArray jsonArray = new JSONArray(stringUserReposResponse);
 
             for (int i = 0; i < jsonArray.length(); i++) {
-
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
-                String path2 = jsonObject.getString("languages_url");
-                String name2 = jsonObject.getString("name");
+                String path = jsonObject.getString("languages_url");
+                String name = jsonObject.getString("name");
 
-                var request3 = HttpRequest.newBuilder().uri(URI.create(path2))
+                var request = HttpRequest.newBuilder().uri(URI.create(path))
                         .setHeader("Authorization", authorization)
                         .GET()
                         .build();
 
-                var response3 = HttpClient.newHttpClient().send(request3, BodyHandlers.ofString());
+                var response3 = HttpClient.newHttpClient().send(request, BodyHandlers.ofString());
 
                 Repository repository = new Repository();
-                repository.setName(name2);
+                repository.setName(name);
 
                 String stringResponse3 = response3.body();
-                JSONObject jj3 = new JSONObject(stringResponse3);
-                Iterator<String> keys = jj3.keys();
+                JSONObject jj = new JSONObject(stringResponse3);
+                Iterator<String> keys = jj.keys();
+
                 while(keys.hasNext()) {
                     String key = keys.next();
-                    int lanSize = jj3.getInt(key);
+                    int lanSize = jj.getInt(key);
                     ProgrammingLanguage programmingLanguage = new ProgrammingLanguage(key, lanSize);
                     repository.addProgrammingLanguage(programmingLanguage);
                 }
 
                 user.addRepository(repository);
-
             }
         }
-        catch (JSONException e)
-        {
+        catch (JSONException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
-
-
 }
 
 
