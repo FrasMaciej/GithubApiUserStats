@@ -66,13 +66,13 @@ public class User {
         }
     }
 
-    //Second point from the exercise - user data with aggregated information about number of bytres in each language
+    //Second point from the exercise - user data with aggregated information about number of bytes in each language
     public void printUserTotalReposInfo(){
         System.out.println("[Login]: " + login);
         System.out.println("[Name]: " + name);
         System.out.println("[Bio]: " + bio + "\n");
 
-        System.out.println("Total aomunt of code written by user: ");
+        System.out.println("Total amount of code written by user: ");
         int i = 1;
         for(ProgrammingLanguage lan: languagesList){
             System.out.println("[" + i + "] " + lan.getName() + ", " + lan.getBytesSize() + " bytes");

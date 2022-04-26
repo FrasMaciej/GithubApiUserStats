@@ -16,12 +16,14 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @RestController
 public class Controller {
     HttpClient client = HttpClient.newHttpClient();
 
-    private static final String authorization = "Bearer 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";
+    private static final String authorization = "Bearer token";
     private static final String baseUrl = "https://api.github.com/users/";
 
     ObjectMapper objectMapper = new ObjectMapper();
@@ -79,7 +81,16 @@ public class Controller {
         user.printUserTotalReposInfo();
         user.printUserData();
 
-        return stringBasicResponse;
+        //Creating String to return in browser
+        Map<Object, Object> response = new LinkedHashMap<>();
+        response.put("Login", user.getLogin());
+        response.put("Name", user.getName());
+        response.put("Bio", user.getBio());
+        response.put("User-languages", user.getLanguagesList());
+        response.put("Repositories-list", user.getRepositoriesList());
+        ObjectMapper mapper = new ObjectMapper();
+        String stringResponse = mapper.writeValueAsString(response);
+        return stringResponse;
     }
 
     public static void getUserRepos(User user, String stringUserReposResponse) throws IOException, InterruptedException {
@@ -101,8 +112,8 @@ public class Controller {
                 Repository repository = new Repository();
                 repository.setName(name);
 
-                String stringResponse3 = response3.body();
-                JSONObject jj = new JSONObject(stringResponse3);
+                String stringResponse = response3.body();
+                JSONObject jj = new JSONObject(stringResponse);
                 Iterator<String> keys = jj.keys();
 
                 while(keys.hasNext()) {

@@ -15,4 +15,4 @@ After that needed steps are:
         .To get it, just write in your browsers:
           http://localhost:8080/user_name/name
         .In the field 'name' you should write selected user
-          The results will be written in the console text interface
+          The results will be written in the console text interface and in your browser

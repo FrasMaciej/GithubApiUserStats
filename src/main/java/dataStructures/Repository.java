@@ -13,8 +13,8 @@ import java.util.ArrayList;
 @AllArgsConstructor
 
 public class Repository {
-    private ArrayList<ProgrammingLanguage> usedLanguages = new ArrayList<>();
     private String name;
+    private ArrayList<ProgrammingLanguage> usedLanguages = new ArrayList<>();
 
     public void addProgrammingLanguage(ProgrammingLanguage programmingLanguage){
         usedLanguages.add(programmingLanguage);
