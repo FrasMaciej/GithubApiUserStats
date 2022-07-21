@@ -1,4 +1,4 @@
-With this simple app you can check summary/statistics of bytes of code written by selected github user.
+With this simple app you can check summary/statistics of bytes of code written by selected github user in each programming language.
 
 UI:
 	.Hello, this is an application thanks to which you can check any GitHub user data:
