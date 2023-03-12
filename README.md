@@ -1,3 +1,5 @@
+This is my first ever written application that is using API
+
 With this simple app you can check summary/statistics of bytes of code written by selected github user in each programming language.
 Application uses public Github Api to obtain all data. 
 
